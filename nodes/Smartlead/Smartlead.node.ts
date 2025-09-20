@@ -3,7 +3,7 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	NodeOperationError,
+	NodeOperationError, // Re-added the import
 	NodeConnectionType,
 } from 'n8n-workflow';
 
@@ -374,6 +374,11 @@ export class Smartlead implements INodeType {
 					} else if (operation === 'addToCampaign') {
 						const campaignId = this.getNodeParameter('campaignId', i) as string;
 						const leadList = this.getNodeParameter('leadList', i) as string;
+						if (!leadList) {
+							throw new NodeOperationError(this.getNode(), 'Lead list cannot be empty.', {
+								itemIndex: i,
+							});
+						}
 						responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', {
 							method: 'POST',
 							url: `/campaigns/${campaignId}/leads`,
