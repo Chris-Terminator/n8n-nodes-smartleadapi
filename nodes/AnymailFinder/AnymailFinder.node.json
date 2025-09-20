@@ -1,0 +1,23 @@
+{
+	"node": "n8n-nodes-anymailfinder.AnymailFinder",
+	"nodeVersion": "1.0",
+	"codex": {
+		"categories": ["Marketing & Content"],
+		"subcategories": {
+			"Marketing & Content": ["Lead Generation"]
+		},
+		"resources": {
+			"primaryDocumentation": [
+				{
+					"url": "https://anymailfinder.com/email-finder-api/docs"
+				}
+			],
+			"credentialDocumentation": [
+				{
+					"url": "https://anymailfinder.com/email-finder-api/docs/authentication"
+				}
+			]
+		},
+		"alias": ["email finder", "email search", "lead generation", "contact discovery"]
+	}
+}
