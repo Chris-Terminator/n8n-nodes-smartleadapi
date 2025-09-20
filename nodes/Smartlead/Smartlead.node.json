@@ -1,0 +1,23 @@
+{
+	"node": "n8n-nodes-smartlead.Smartlead",
+	"nodeVersion": "1.0",
+	"codex": {
+		"categories": ["Sales & CRM"],
+		"subcategories": {
+			"Sales & CRM": ["Lead Management"]
+		},
+		"resources": {
+			"primaryDocumentation": [
+				{
+					"url": "https://help.smartlead.ai/API-Documentation-a0d223bdd3154a77b3735497aad9419f"
+				}
+			],
+			"credentialDocumentation": [
+				{
+					"url": "https://help.smartlead.ai/API-Documentation-a0d223bdd3154a77b3735497aad9419f"
+				}
+			]
+		},
+		"alias": ["smartlead.ai", "cold email", "outreach", "lead management"]
+	}
+}
