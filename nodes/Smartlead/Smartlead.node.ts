@@ -11,7 +11,7 @@ export class Smartlead implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Smartlead',
 		name: 'smartlead',
-		icon: 'file:smartlead.svg', // You will need to create a smartlead.svg icon
+		icon: 'file:Smartlead.svg', // You will need to create a smartlead.svg icon
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
