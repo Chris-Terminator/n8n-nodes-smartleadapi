@@ -189,7 +189,7 @@ export class Smartlead implements INodeType {
 				displayOptions: { show: { resource: ['client'] } },
 				options: [
 					{ name: 'Add', value: 'add', description: 'Add a new client', action: 'Add a client' },
-					{ name: 'Get Many', value: 'getAll', description: 'Get all clients', action: 'Get many clients' },
+					{ name: 'Get Many', value: 'getAll', description: 'Get many clients', action: 'Get many clients' },
 				],
 				default: 'getAll',
 			},
@@ -433,7 +433,7 @@ export class Smartlead implements INodeType {
 				default: '[{"id": 1234, "seq_number": 1}]',
 				required: true,
 				displayOptions: { show: { resource: ['campaign'], operation: ['saveSequence'] } },
-				description: 'Array of sequence objects with id and seq_number',
+				description: 'Array of sequence objects with ID and seq_number',
 			},
 
 			// Campaign -> Add/Remove Email Account
@@ -486,7 +486,6 @@ export class Smartlead implements INodeType {
 				type: 'number',
 				typeOptions: {
 					minValue: 1,
-					maxValue: 100,
 				},
 				default: 50,
 				displayOptions: { 
@@ -631,7 +630,6 @@ export class Smartlead implements INodeType {
 				type: 'number',
 				typeOptions: {
 					minValue: 1,
-					maxValue: 100,
 				},
 				default: 50,
 				displayOptions: { 
@@ -848,7 +846,6 @@ export class Smartlead implements INodeType {
 						type: 'number',
 						typeOptions: {
 							minValue: 1,
-							maxValue: 100,
 						},
 						default: 50,
 						description: 'Max number of results to return',
