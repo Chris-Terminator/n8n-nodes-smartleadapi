@@ -217,194 +217,275 @@ export class Smartlead implements INodeType {
 		],
 	};
 
-	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+			async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		let returnData: INodeExecutionData[] = [];
+		const credentials = await this.getCredentials('smartleadApi');
+		const apiKey = credentials.apiKey as string;
+
 		for (let i = 0; i < items.length; i++) {
 			try {
 				const resource = this.getNodeParameter('resource', i) as string;
 				const operation = this.getNodeParameter('operation', i) as string;
 				let responseData;
-				let campaignId, leadId, accountId, body, qs;
+				let body: any = {};
+				let qs: any = { api_key: apiKey };
 				const baseURL = 'https://server.smartlead.ai/api/v1';
 
 				if (this.getNodeParameter('jsonParameters', i)) {
 					const parameters = JSON.parse(this.getNodeParameter('parameters', i, '{}') as string);
 					body = parameters;
-					qs = parameters;
+					qs = { ...qs, ...parameters };
 				}
 
 				switch (resource) {
-					case 'campaign':
-						campaignId = this.getNodeParameter('campaignId', i, '') as string;
+					case 'campaign': {
 						switch (operation) {
-							case 'create':
+							case 'create': {
 								body = body ?? {
 									name: this.getNodeParameter('campaignName', i) as string,
 									client_id: this.getNodeParameter('clientId', i, undefined),
 								};
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/create`, body });
 								break;
-							case 'getAll':
+							}
+							case 'getAll': {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/campaigns` });
 								break;
-							case 'get':
+							}
+							case 'get': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/campaigns/${campaignId}` });
 								break;
-							case 'delete':
+							}
+							case 'delete': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'DELETE', url: `${baseURL}/campaigns/${campaignId}` });
 								break;
-							case 'updateSchedule':
+							}
+							case 'updateSchedule': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/schedule`, body });
 								break;
-							case 'updateSettings':
+							}
+							case 'updateSettings': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/settings`, body });
 								break;
-							case 'updateStatus':
+							}
+							case 'updateStatus': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/status`, body });
 								break;
-							case 'getSequences':
+							}
+							case 'getSequences': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/campaigns/${campaignId}/sequences` });
 								break;
-							case 'saveSequence':
+							}
+							case 'saveSequence': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/sequences`, body });
 								break;
-							case 'getEmailAccounts':
+							}
+							case 'getEmailAccounts': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/campaigns/${campaignId}/email-accounts` });
 								break;
-							case 'addEmailAccount':
+							}
+							case 'addEmailAccount': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/email-accounts`, body });
 								break;
-							case 'removeEmailAccount':
+							}
+							case 'removeEmailAccount': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'DELETE', url: `${baseURL}/campaigns/${campaignId}/email-accounts`, body });
 								break;
+							}
 						}
 						break;
-					case 'lead':
-						campaignId = this.getNodeParameter('campaignId', i, '') as string;
-						leadId = this.getNodeParameter('leadId', i, '') as string;
+					}
+					case 'lead': {
 						switch (operation) {
-							case 'addToCampaign':
+							case 'addToCampaign': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
 								body = body ?? { lead_list: JSON.parse(this.getNodeParameter('leadList', i) as string) };
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/leads`, body });
 								break;
-							case 'listAllByCampaign':
+							}
+							case 'listAllByCampaign': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/campaigns/${campaignId}/leads`, qs });
 								break;
-							case 'update':
+							}
+							case 'update': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
+								const leadId = this.getNodeParameter('leadId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/leads/${leadId}`, body });
 								break;
-							case 'deleteFromCampaign':
+							}
+							case 'deleteFromCampaign': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
+								const leadId = this.getNodeParameter('leadId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'DELETE', url: `${baseURL}/campaigns/${campaignId}/leads/${leadId}` });
 								break;
-							case 'pauseInCampaign':
+							}
+							case 'pauseInCampaign': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
+								const leadId = this.getNodeParameter('leadId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/leads/${leadId}/pause` });
 								break;
-							case 'resumeInCampaign':
+							}
+							case 'resumeInCampaign': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
+								const leadId = this.getNodeParameter('leadId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/leads/${leadId}/resume` });
 								break;
-							case 'unsubscribeFromCampaign':
+							}
+							case 'unsubscribeFromCampaign': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
+								const leadId = this.getNodeParameter('leadId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/leads/${leadId}/unsubscribe` });
 								break;
-							case 'updateCategory':
+							}
+							case 'updateCategory': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
+								const leadId = this.getNodeParameter('leadId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/leads/${leadId}/category`, body });
 								break;
-							case 'getByEmail':
+							}
+							case 'getByEmail': {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/leads`, qs });
 								break;
-							case 'getCategories':
+							}
+							case 'getCategories': {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/leads/fetch-categories` });
 								break;
-							case 'getCampaigns':
+							}
+							case 'getCampaigns': {
+								const leadId = this.getNodeParameter('leadId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/leads/${leadId}/campaigns` });
 								break;
-							case 'unsubscribeFromAll':
+							}
+							case 'unsubscribeFromAll': {
+								const leadId = this.getNodeParameter('leadId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/leads/${leadId}/unsubscribe` });
 								break;
-							case 'addToGlobalBlockList':
+							}
+							case 'addToGlobalBlockList': {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/leads/add-domain-block-list`, body });
 								break;
+							}
 						}
 						break;
-					case 'emailAccount':
-						accountId = this.getNodeParameter('accountId', i, '') as string;
+					}
+					case 'emailAccount': {
 						switch (operation) {
-							case 'getAll':
+							case 'getAll': {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/email-accounts` });
 								break;
-							case 'create':
+							}
+							case 'create': {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/email-accounts/save`, body });
 								break;
-							case 'get':
+							}
+							case 'get': {
+								const accountId = this.getNodeParameter('accountId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/email-accounts/${accountId}` });
 								break;
-							case 'update':
+							}
+							case 'update': {
+								const accountId = this.getNodeParameter('accountId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/email-accounts/${accountId}`, body });
 								break;
-							case 'updateWarmup':
+							}
+							case 'updateWarmup': {
+								const accountId = this.getNodeParameter('accountId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/email-accounts/${accountId}/warmup`, body });
 								break;
-							case 'getWarmupStats':
+							}
+							case 'getWarmupStats': {
+								const accountId = this.getNodeParameter('accountId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/email-accounts/${accountId}/warmup-stats` });
 								break;
-							case 'reconnectFailed':
+							}
+							case 'reconnectFailed': {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/email-accounts/reconnect-failed-email-accounts` });
 								break;
+							}
 						}
 						break;
-					case 'campaignStatistics':
-						campaignId = this.getNodeParameter('campaignId', i, '') as string;
+					}
+					case 'campaignStatistics': {
+						const campaignId = this.getNodeParameter('campaignId', i, '') as string;
 						switch (operation) {
-							case 'getByCampaign':
+							case 'getByCampaign': {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/campaigns/${campaignId}/statistics`, qs });
 								break;
-							case 'getAnalytics':
+							}
+							case 'getAnalytics': {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/campaigns/${campaignId}/analytics` });
 								break;
-							case 'getAnalyticsByDate':
+							}
+							case 'getAnalyticsByDate': {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/campaigns/${campaignId}/analytics-by-date`, qs });
 								break;
-							case 'exportLeads':
+							}
+							case 'exportLeads': {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/campaigns/${campaignId}/leads-export`, qs });
 								break;
+							}
 						}
 						break;
-					case 'masterInbox':
-						campaignId = this.getNodeParameter('campaignId', i, '') as string;
-						leadId = this.getNodeParameter('leadId', i, '') as string;
+					}
+					case 'masterInbox': {
 						switch (operation) {
-							case 'getMessageHistory':
+							case 'getMessageHistory': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
+								const leadId = this.getNodeParameter('leadId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/campaigns/${campaignId}/leads/${leadId}/message-history` });
 								break;
-							case 'replyToThread':
+							}
+							case 'replyToThread': {
+								const campaignId = this.getNodeParameter('campaignId', i, '') as string;
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/reply-email-thread`, body });
 								break;
+							}
 						}
 						break;
-					case 'webhook':
-						campaignId = this.getNodeParameter('campaignId', i, '') as string;
+					}
+					case 'webhook': {
+						const campaignId = this.getNodeParameter('campaignId', i, '') as string;
 						switch (operation) {
-							case 'getByCampaign':
+							case 'getByCampaign': {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/campaigns/${campaignId}/webhooks` });
 								break;
-							case 'createOrUpdate':
+							}
+							case 'createOrUpdate': {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/webhooks`, body });
 								break;
-							case 'delete':
+							}
+							case 'delete': {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'DELETE', url: `${baseURL}/campaigns/${campaignId}/webhooks`, body });
 								break;
+							}
 						}
 						break;
-					case 'client':
+					}
+					case 'client': {
 						switch (operation) {
-							case 'getAll':
+							case 'getAll': {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/client` });
 								break;
-							case 'add':
+							}
+							case 'add': {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/client/save`, body });
 								break;
+							}
 						}
 						break;
+					}
 				}
 
 				if (typeof responseData === 'string') {
