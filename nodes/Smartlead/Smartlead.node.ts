@@ -56,9 +56,10 @@ export class Smartlead implements INodeType {
 				default: 'campaign',
 			},
 			{
-				displayName: 'Operation',
+				displayName: 'Operation Name or ID',
 				name: 'operation',
 				type: 'options',
+				description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 				noDataExpression: true,
 				displayOptions: {
 					show: {
@@ -77,7 +78,7 @@ export class Smartlead implements INodeType {
 				typeOptions: {
 					loadOptionsMethod: 'loadOperations',
 				},
-				default: 'getAll',
+				default: '',
 			},
 
 			// ====================================================================
