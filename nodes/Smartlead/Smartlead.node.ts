@@ -43,7 +43,7 @@ export class Smartlead implements INodeType {
 				noDataExpression: true,
 				options: [
 					{ name: 'Campaign', value: 'campaign' },
-					{ name: 'Campaign Statistics', value: 'campaignStatistics' },
+					{ name: 'Campaign Statistic', value: 'campaignStatistics' },
 					{ name: 'Client', value: 'client' },
 					{ name: 'Email Account', value: 'emailAccount' },
 					{ name: 'Lead', value: 'lead' },
@@ -209,7 +209,7 @@ export class Smartlead implements INodeType {
 						operation: ['get', 'delete', 'updateSchedule', 'updateSettings', 'updateStatus', 'getSequences', 'saveSequence', 'getEmailAccounts', 'addEmailAccount', 'removeEmailAccount'],
 					},
 				},
-				description: 'The ID of the campaign',
+				description: 'ID of the campaign',
 			},
 			{
 				displayName: 'Campaign ID',
@@ -484,14 +484,18 @@ export class Smartlead implements INodeType {
 				displayName: 'Limit',
 				name: 'limit',
 				type: 'number',
-				default: 100,
+				typeOptions: {
+					minValue: 1,
+					maxValue: 100,
+				},
+				default: 50,
 				displayOptions: { 
 					show: { 
 						resource: ['lead'], 
 						operation: ['listAllByCampaign'] 
 					} 
 				},
-				description: 'The number of results to return',
+				description: 'Max number of results to return',
 			},
 			{
 				displayName: 'Offset',
@@ -625,14 +629,18 @@ export class Smartlead implements INodeType {
 				displayName: 'Limit',
 				name: 'limit',
 				type: 'number',
-				default: 100,
+				typeOptions: {
+					minValue: 1,
+					maxValue: 100,
+				},
+				default: 50,
 				displayOptions: { 
 					show: { 
 						resource: ['emailAccount'], 
 						operation: ['getAll'] 
 					} 
 				},
-				description: 'The number of results to return',
+				description: 'Max number of results to return',
 			},
 			{
 				displayName: 'Offset',
@@ -659,58 +667,28 @@ export class Smartlead implements INodeType {
 				displayOptions: { show: { resource: ['emailAccount'], operation: ['create'] } },
 				options: [
 					{
-						displayName: 'From Name',
-						name: 'from_name',
-						type: 'string',
-						default: '',
-						required: true,
-					},
-					{
 						displayName: 'From Email',
 						name: 'from_email',
 						type: 'string',
 						default: '',
-						required: true,
+						placeholder: 'name@email.com',
 					},
 					{
-						displayName: 'Username',
-						name: 'username',
+						displayName: 'From Name',
+						name: 'from_name',
 						type: 'string',
 						default: '',
-						required: true,
 					},
 					{
-						displayName: 'Password',
-						name: 'password',
-						type: 'string',
-						typeOptions: { password: true },
-						default: '',
-						required: true,
-					},
-					{
-						displayName: 'SMTP Host',
-						name: 'smtp_host',
-						type: 'string',
-						default: '',
-						required: true,
-					},
-					{
-						displayName: 'SMTP Port',
-						name: 'smtp_port',
-						type: 'number',
-						default: 587,
-						required: true,
-					},
-					{
-						displayName: 'SMTP Encryption',
-						name: 'smtp_encryption',
+						displayName: 'IMAP Encryption',
+						name: 'imap_encryption',
 						type: 'options',
 						options: [
-							{ name: 'TLS', value: 'TLS' },
 							{ name: 'SSL', value: 'SSL' },
+							{ name: 'TLS', value: 'TLS' },
 							{ name: 'None', value: 'NONE' },
 						],
-						default: 'TLS',
+						default: 'SSL',
 					},
 					{
 						displayName: 'IMAP Host',
@@ -725,33 +703,58 @@ export class Smartlead implements INodeType {
 						default: 993,
 					},
 					{
-						displayName: 'IMAP Encryption',
-						name: 'imap_encryption',
-						type: 'options',
-						options: [
-							{ name: 'SSL', value: 'SSL' },
-							{ name: 'TLS', value: 'TLS' },
-							{ name: 'None', value: 'NONE' },
-						],
-						default: 'SSL',
-					},
-					{
 						displayName: 'Max Email Per Day',
 						name: 'max_email_per_day',
 						type: 'number',
 						default: 100,
 					},
 					{
-						displayName: 'Warmup Enabled',
-						name: 'warmup_enabled',
-						type: 'boolean',
-						default: false,
+						displayName: 'Password',
+						name: 'password',
+						type: 'string',
+						typeOptions: { password: true },
+						default: '',
+					},
+					{
+						displayName: 'SMTP Encryption',
+						name: 'smtp_encryption',
+						type: 'options',
+						options: [
+							{ name: 'TLS', value: 'TLS' },
+							{ name: 'SSL', value: 'SSL' },
+							{ name: 'None', value: 'NONE' },
+						],
+						default: 'TLS',
+					},
+					{
+						displayName: 'SMTP Host',
+						name: 'smtp_host',
+						type: 'string',
+						default: '',
+					},
+					{
+						displayName: 'SMTP Port',
+						name: 'smtp_port',
+						type: 'number',
+						default: 587,
 					},
 					{
 						displayName: 'Total Warmup Per Day',
 						name: 'total_warmup_per_day',
 						type: 'number',
 						default: 20,
+					},
+					{
+						displayName: 'Username',
+						name: 'username',
+						type: 'string',
+						default: '',
+					},
+					{
+						displayName: 'Warmup Enabled',
+						name: 'warmup_enabled',
+						type: 'boolean',
+						default: false,
 					},
 				],
 			},
@@ -843,8 +846,12 @@ export class Smartlead implements INodeType {
 						displayName: 'Limit',
 						name: 'limit',
 						type: 'number',
-						default: 100,
-						description: 'The number of results to return',
+						typeOptions: {
+							minValue: 1,
+							maxValue: 100,
+						},
+						default: 50,
+						description: 'Max number of results to return',
 					},
 					{
 						displayName: 'Offset',
@@ -945,11 +952,11 @@ export class Smartlead implements INodeType {
 						name: 'events',
 						type: 'multiOptions',
 						options: [
-							{ name: 'Email Sent', value: 'EMAIL_SENT' },
-							{ name: 'Email Opened', value: 'EMAIL_OPENED' },
-							{ name: 'Email Clicked', value: 'EMAIL_CLICKED' },
-							{ name: 'Email Replied', value: 'EMAIL_REPLIED' },
 							{ name: 'Email Bounced', value: 'EMAIL_BOUNCED' },
+							{ name: 'Email Clicked', value: 'EMAIL_CLICKED' },
+							{ name: 'Email Opened', value: 'EMAIL_OPENED' },
+							{ name: 'Email Replied', value: 'EMAIL_REPLIED' },
+							{ name: 'Email Sent', value: 'EMAIL_SENT' },
 							{ name: 'Email Unsubscribed', value: 'EMAIL_UNSUBSCRIBED' },
 						],
 						default: ['EMAIL_OPENED'],
@@ -987,16 +994,13 @@ export class Smartlead implements INodeType {
 						name: 'name',
 						type: 'string',
 						default: '',
-						required: true,
-						description: 'The name of the client',
 					},
 					{
 						displayName: 'Email',
 						name: 'email',
 						type: 'string',
 						default: '',
-						required: true,
-						description: 'The email address of the client',
+						placeholder: 'name@email.com',
 					},
 					{
 						displayName: 'Company',
