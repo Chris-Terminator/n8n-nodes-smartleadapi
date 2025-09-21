@@ -56,16 +56,15 @@ export class Smartlead implements INodeType {
 				default: 'campaign',
 			},
 			{
-				displayName: 'Operation Name or ID',
+				displayName: 'Operation',
 				name: 'operation',
 				type: 'options',
-				description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 				noDataExpression: true,
 				// The options are now loaded dynamically based on the resource selected
 				typeOptions: {
 					loadOptionsMethod: 'loadOperations',
 				},
-				default: '',
+				default: 'getAll',
 			},
 
 			// ====================================================================
@@ -655,7 +654,7 @@ export class Smartlead implements INodeType {
 	};
 
 	// Method to dynamically load operations based on the selected resource
-	async loadOperations(this: INodePropertyOptions): Promise<INodePropertyOptions[]> {
+	async loadOperations(this: IExecuteFunctions): Promise<INodePropertyOptions[]> {
 		const resource = this.getNodeParameter('resource', 0, '') as string;
 		if (resource === 'campaign') {
 			return [
