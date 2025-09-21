@@ -23,7 +23,7 @@
 		"node": ">=18.17.0"
 	},
 	"packageManager": "npm@9.6.7",
-	"main": "dist/nodes/Smartlead/Smartlead.node.js",
+	"main": "index.js",
 	"scripts": {
 		"preinstall": "npx only-allow npm",
 		"build": "tsc && gulp build:icons",
