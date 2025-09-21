@@ -3,7 +3,7 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	NodeOperationError, // Re-added the import
+	NodeOperationError,
 	NodeConnectionType,
 } from 'n8n-workflow';
 
@@ -35,32 +35,20 @@ export class Smartlead implements INodeType {
 			},
 		},
 		properties: [
+			// Resources
 			{
 				displayName: 'Resource',
 				name: 'resource',
 				type: 'options',
 				noDataExpression: true,
 				options: [
-					{
-						name: 'Campaign',
-						value: 'campaign',
-					},
-					{
-						name: 'Lead',
-						value: 'lead',
-					},
-					{
-						name: 'Email Account',
-						value: 'emailAccount',
-					},
-					{
-						name: 'Webhook',
-						value: 'webhook',
-					},
-					{
-						name: 'Client',
-						value: 'client',
-					},
+					{ name: 'Campaign', value: 'campaign' },
+					{ name: 'Campaign Statistics', value: 'campaignStatistics' },
+					{ name: 'Client', value: 'client' },
+					{ name: 'Email Account', value: 'emailAccount' },
+					{ name: 'Lead', value: 'lead' },
+					{ name: 'Master Inbox', value: 'masterInbox' },
+					{ name: 'Webhook', value: 'webhook' },
 				],
 				default: 'campaign',
 			},
@@ -71,36 +59,20 @@ export class Smartlead implements INodeType {
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
-				displayOptions: {
-					show: {
-						resource: ['campaign'],
-					},
-				},
+				displayOptions: { show: { resource: ['campaign'] } },
 				options: [
-					{
-						name: 'Get All',
-						value: 'getAll',
-						description: 'Get all campaigns',
-						action: 'Get all campaigns',
-					},
-					{
-						name: 'Create',
-						value: 'create',
-						description: 'Create a new campaign',
-						action: 'Create a campaign',
-					},
-					{
-						name: 'Delete',
-						value: 'delete',
-						description: 'Delete a campaign',
-						action: 'Delete a campaign',
-					},
-					{
-						name: 'Get Sequence Analytics',
-						value: 'getSequenceAnalytics',
-						description: 'Get sequence analytics for a campaign',
-						action: 'Get sequence analytics',
-					},
+					{ name: 'Add Email Account', value: 'addEmailAccount', description: 'Add an email account to a campaign', action: 'Add an email account to a campaign' },
+					{ name: 'Create', value: 'create', description: 'Create a new campaign', action: 'Create a campaign' },
+					{ name: 'Delete', value: 'delete', description: 'Delete a campaign', action: 'Delete a campaign' },
+					{ name: 'Get', value: 'get', description: 'Get a campaign by ID', action: 'Get a campaign' },
+					{ name: 'Get Many', value: 'getAll', description: 'Get many campaigns', action: 'Get many campaigns' },
+					{ name: 'Get Email Accounts', value: 'getEmailAccounts', description: 'List all email accounts for a campaign', action: 'Get a campaign\'s email accounts' },
+					{ name: 'Get Sequences', value: 'getSequences', description: 'Fetch sequences for a campaign', action: 'Get a campaign\'s sequences' },
+					{ name: 'Remove Email Account', value: 'removeEmailAccount', description: 'Remove an email account from a campaign', action: 'Remove an email account from a campaign' },
+					{ name: 'Save Sequence', value: 'saveSequence', description: 'Save a campaign sequence', action: 'Save a campaign sequence' },
+					{ name: 'Update Schedule', value: 'updateSchedule', description: 'Update a campaign\'s schedule', action: 'Update a campaign\'s schedule' },
+					{ name: 'Update Settings', value: 'updateSettings', description: 'Update a campaign\'s settings', action: 'Update a campaign\'s settings' },
+					{ name: 'Update Status', value: 'updateStatus', description: 'Update a campaign\'s status', action: 'Update a campaign\'s status' },
 				],
 				default: 'getAll',
 			},
@@ -109,30 +81,21 @@ export class Smartlead implements INodeType {
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
-				displayOptions: {
-					show: {
-						resource: ['lead'],
-					},
-				},
+				displayOptions: { show: { resource: ['lead'] } },
 				options: [
-					{
-						name: 'List All By Campaign',
-						value: 'listAllByCampaign',
-						description: 'List all leads by campaign ID',
-						action: 'List all leads by campaign',
-					},
-					{
-						name: 'Add To Campaign',
-						value: 'addToCampaign',
-						description: 'Add leads to a campaign',
-						action: 'Add leads to a campaign',
-					},
-					{
-						name: 'Delete From Campaign',
-						value: 'deleteFromCampaign',
-						description: 'Delete a lead from a campaign',
-						action: 'Delete a lead from a campaign',
-					},
+					{ name: 'Add To Campaign', value: 'addToCampaign', description: 'Add leads to a campaign', action: 'Add leads to a campaign' },
+					{ name: 'Add To Global Block List', value: 'addToGlobalBlockList', description: 'Add a lead or domain to the global block list', action: 'Add to global block list' },
+					{ name: 'Delete From Campaign', value: 'deleteFromCampaign', description: 'Delete a lead from a campaign', action: 'Delete a lead from a campaign' },
+					{ name: 'Get By Email', value: 'getByEmail', description: 'Fetch a lead by their email address', action: 'Get a lead by email' },
+					{ name: 'Get Campaigns', value: 'getCampaigns', description: 'Fetch all campaigns a specific lead belongs to', action: 'Get a lead\'s campaigns' },
+					{ name: 'Get Categories', value: 'getCategories', description: 'Fetch all available lead categories', action: 'Get lead categories' },
+					{ name: 'List All By Campaign', value: 'listAllByCampaign', description: 'List all leads by campaign ID', action: 'List all leads by campaign' },
+					{ name: 'Pause In Campaign', value: 'pauseInCampaign', description: 'Pause a lead in a campaign', action: 'Pause a lead in a campaign' },
+					{ name: 'Resume In Campaign', value: 'resumeInCampaign', description: 'Resume a lead in a campaign', action: 'Resume a lead in a campaign' },
+					{ name: 'Unsubscribe From All Campaigns', value: 'unsubscribeFromAll', description: 'Unsubscribe a lead from all campaigns', action: 'Unsubscribe a lead from all campaigns' },
+					{ name: 'Unsubscribe From Campaign', value: 'unsubscribeFromCampaign', description: 'Unsubscribe a lead from a campaign', action: 'Unsubscribe a lead from a campaign' },
+					{ name: 'Update', value: 'update', description: 'Update a lead\'s information', action: 'Update a lead' },
+					{ name: 'Update Category', value: 'updateCategory', description: 'Update a lead’s category within a campaign', action: 'Update a lead\'s category' },
 				],
 				default: 'listAllByCampaign',
 			},
@@ -141,87 +104,71 @@ export class Smartlead implements INodeType {
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
-				displayOptions: {
-					show: {
-						resource: ['emailAccount'],
-					},
-				},
+				displayOptions: { show: { resource: ['emailAccount'] } },
 				options: [
-					{
-						name: 'Create',
-						value: 'create',
-						description: 'Create an email account',
-						action: 'Create an email account',
-					},
-					{
-						name: 'Remove From Campaign',
-						value: 'removeFromCampaign',
-						description: 'Remove an email account from a campaign',
-						action: 'Remove an email account from a campaign',
-					},
+					{ name: 'Create', value: 'create', description: 'Create an email account', action: 'Create an email account' },
+					{ name: 'Get', value: 'get', description: 'Fetch an email account by ID', action: 'Get an email account' },
+					{ name: 'Get Many', value: 'getAll', description: 'Fetch all email accounts', action: 'Get many email accounts' },
+					{ name: 'Get Warmup Stats', value: 'getWarmupStats', description: 'Fetch warmup stats for an email account', action: 'Get an email account\'s warmup stats' },
+					{ name: 'Reconnect Failed Accounts', value: 'reconnectFailed', description: 'Bulk reconnect disconnected email accounts', action: 'Reconnect failed email accounts' },
+					{ name: 'Update', value: 'update', description: 'Update an existing email account', action: 'Update an email account' },
+					{ name: 'Update Warmup Settings', value: 'updateWarmup', description: 'Add or update warmup settings for an email account', action: 'Update an email account\'s warmup settings' },
 				],
-				default: 'create',
+				default: 'getAll',
 			},
 			{
 				displayName: 'Operation',
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
-				displayOptions: {
-					show: {
-						resource: ['webhook'],
-					},
-				},
+				displayOptions: { show: { resource: ['campaignStatistics'] } },
 				options: [
-					{
-						name: 'Fetch By Campaign',
-						value: 'fetchByCampaign',
-						description: 'Fetch webhooks by campaign ID',
-						action: 'Fetch webhooks by campaign',
-					},
-					{
-						name: 'Delete',
-						value: 'delete',
-						description: 'Delete a campaign webhook',
-						action: 'Delete a webhook',
-					},
+					{ name: 'Get By Campaign', value: 'getByCampaign', description: 'Fetch detailed statistics for a campaign', action: 'Get campaign statistics' },
+					{ name: 'Get Analytics', value: 'getAnalytics', description: 'Fetch top-level analytics for a campaign', action: 'Get campaign analytics' },
+					{ name: 'Get Analytics By Date', value: 'getAnalyticsByDate', description: 'Fetch campaign statistics within a date range', action: 'Get campaign analytics by date' },
+					{ name: 'Export Leads', value: 'exportLeads', description: 'Export all leads from a campaign as a CSV file', action: 'Export campaign leads' },
 				],
-				default: 'fetchByCampaign',
+				default: 'getByCampaign',
 			},
 			{
 				displayName: 'Operation',
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
-				displayOptions: {
-					show: {
-						resource: ['client'],
-					},
-				},
+				displayOptions: { show: { resource: ['masterInbox'] } },
 				options: [
-					{
-						name: 'Add',
-						value: 'add',
-						description: 'Add a client to the system',
-						action: 'Add a client',
-					},
-					{
-						name: 'Delete API Key',
-						value: 'deleteApiKey',
-						description: 'Delete a client API key',
-						action: 'Delete a client API key',
-					},
-					{
-						name: 'Reset API Key',
-						value: 'resetApiKey',
-						description: 'Reset a client API key',
-						action: 'Reset a client API key',
-					},
+					{ name: 'Get Message History', value: 'getMessageHistory', description: 'Fetch message history for a lead in a campaign', action: 'Get a lead\'s message history' },
+					{ name: 'Reply To Thread', value: 'replyToThread', description: 'Reply to a lead from the Master Inbox', action: 'Reply to a lead\'s email thread' },
 				],
-				default: 'add',
+				default: 'getMessageHistory',
+			},
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: { show: { resource: ['webhook'] } },
+				options: [
+					{ name: 'Create or Update', value: 'createOrUpdate', description: 'Add or update a webhook for a campaign', action: 'Create or update a webhook' },
+					{ name: 'Delete', value: 'delete', description: 'Delete a campaign webhook', action: 'Delete a webhook' },
+					{ name: 'Get Many By Campaign', value: 'getByCampaign', description: 'Fetch all webhooks for a campaign', action: 'Get many webhooks by campaign' },
+				],
+				default: 'getByCampaign',
+			},
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: { show: { resource: ['client'] } },
+				options: [
+					{ name: 'Add', value: 'add', description: 'Add a new client to the system', action: 'Add a client' },
+					{ name: 'Get Many', value: 'getAll', description: 'Fetch all clients', action: 'Get many clients' },
+				],
+				default: 'getAll',
 			},
 
-			// Properties
+			// Fields
 			{
 				displayName: 'Campaign ID',
 				name: 'campaignId',
@@ -230,52 +177,11 @@ export class Smartlead implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						resource: ['campaign', 'lead', 'emailAccount', 'webhook'],
-						operation: ['delete', 'getSequenceAnalytics', 'listAllByCampaign', 'addToCampaign', 'deleteFromCampaign', 'removeFromCampaign', 'fetchByCampaign', 'delete'],
+						resource: ['campaign', 'campaignStatistics', 'lead', 'emailAccount', 'webhook', 'masterInbox'],
+						operation: ['get', 'delete', 'updateSchedule', 'updateSettings', 'updateStatus', 'getSequences', 'getEmailAccounts', 'addEmailAccount', 'removeEmailAccount', 'fetchCampaignStatistics', 'fetchMailboxStatistics', 'getByCampaign', 'getAnalytics', 'getAnalyticsByDate', 'exportLeads', 'listAllByCampaign', 'addToCampaign', 'deleteFromCampaign', 'removeFromCampaign', 'fetchByCampaign', 'delete', 'getMessageHistory', 'replyToThread', 'createOrUpdate'],
 					},
 				},
 				description: 'The ID of the campaign',
-			},
-			{
-				displayName: 'Client ID',
-				name: 'clientId',
-				type: 'string',
-				default: '',
-				displayOptions: {
-					show: {
-						resource: ['campaign', 'client'],
-						operation: ['create', 'add', 'deleteApiKey', 'resetApiKey'],
-					},
-				},
-				description: 'The ID of the client',
-			},
-			{
-				displayName: 'Campaign Name',
-				name: 'campaignName',
-				type: 'string',
-				default: '',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['campaign'],
-						operation: ['create'],
-					},
-				},
-				description: 'The name of the campaign',
-			},
-			{
-				displayName: 'Lead List',
-				name: 'leadList',
-				type: 'json',
-				default: '[]',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['lead'],
-						operation: ['addToCampaign'],
-					},
-				},
-				description: 'An array of lead objects to add to the campaign',
 			},
 			{
 				displayName: 'Lead ID',
@@ -285,136 +191,88 @@ export class Smartlead implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						resource: ['lead'],
-						operation: ['deleteFromCampaign'],
+						resource: ['lead', 'masterInbox'],
+						operation: ['update', 'deleteFromCampaign', 'pauseInCampaign', 'resumeInCampaign', 'unsubscribeFromCampaign', 'updateCategory', 'getCampaigns', 'unsubscribeFromAll', 'getMessageHistory', 'replyToThread'],
 					},
 				},
-				description: 'The ID of the lead to delete',
+				description: 'The ID of the lead',
 			},
 			{
-				displayName: 'Email Account ID',
-				name: 'emailAccountId',
-				type: 'string',
-				default: '',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['emailAccount'],
-						operation: ['removeFromCampaign'],
-					},
-				},
-				description: 'The ID of the email account to remove',
+				displayName: 'JSON Parameters',
+				name: 'jsonParameters',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to use a JSON object to specify all body parameters',
 			},
 			{
-				displayName: 'Webhook ID',
-				name: 'webhookId',
-				type: 'string',
-				default: '',
-				required: true,
+				displayName: 'Body Parameters',
+				name: 'bodyParameters',
+				type: 'json',
 				displayOptions: {
 					show: {
-						resource: ['webhook'],
-						operation: ['delete'],
+						jsonParameters: [true],
 					},
 				},
-				description: 'The ID of the webhook to delete',
+				default: '{}',
+				description: 'The JSON object to use as the request body',
 			},
 		],
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
-		const returnData: INodeExecutionData[] = [];
-
+		let returnData: INodeExecutionData[] = [];
 		for (let i = 0; i < items.length; i++) {
 			try {
 				const resource = this.getNodeParameter('resource', i) as string;
 				const operation = this.getNodeParameter('operation', i) as string;
-
 				let responseData;
+				let campaignId, leadId, accountId, body, qs;
 
-				if (resource === 'campaign') {
-					if (operation === 'getAll') {
-						responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', {
-							method: 'GET',
-							url: '/campaigns',
-						});
-					} else if (operation === 'create') {
-						const campaignName = this.getNodeParameter('campaignName', i) as string;
-						const clientId = this.getNodeParameter('clientId', i) as string;
-						const body: any = { name: campaignName };
-						if (clientId) {
-							body.client_id = clientId;
-						}
-						responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', {
-							method: 'POST',
-							url: '/campaigns/create',
-							body,
-						});
-					} else if (operation === 'delete') {
-						const campaignId = this.getNodeParameter('campaignId', i) as string;
-						responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', {
-							method: 'DELETE',
-							url: `/campaigns/${campaignId}`,
-						});
-					} else if (operation === 'getSequenceAnalytics') {
-						const campaignId = this.getNodeParameter('campaignId', i) as string;
-						responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', {
-							method: 'GET',
-							url: `/campaigns/${campaignId}/sequence-analytics`,
-						});
-					}
-				} else if (resource === 'lead') {
-					if (operation === 'listAllByCampaign') {
-						const campaignId = this.getNodeParameter('campaignId', i) as string;
-						responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', {
-							method: 'GET',
-							url: `/campaigns/${campaignId}/leads`,
-						});
-					} else if (operation === 'addToCampaign') {
-						const campaignId = this.getNodeParameter('campaignId', i) as string;
-						const leadList = this.getNodeParameter('leadList', i) as string;
-						if (!leadList) {
-							throw new NodeOperationError(this.getNode(), 'Lead list cannot be empty.', {
-								itemIndex: i,
-							});
-						}
-						responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', {
-							method: 'POST',
-							url: `/campaigns/${campaignId}/leads`,
-							body: { lead_list: JSON.parse(leadList) },
-						});
-					} else if (operation === 'deleteFromCampaign') {
-						const campaignId = this.getNodeParameter('campaignId', i) as string;
-						const leadId = this.getNodeParameter('leadId', i) as string;
-						responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', {
-							method: 'DELETE',
-							url: `/campaigns/${campaignId}/leads/${leadId}`,
-						});
-					}
+				if (this.getNodeParameter('jsonParameters', i)) {
+					body = JSON.parse(this.getNodeParameter('bodyParameters', i) as string);
 				}
-				// ... other resources and operations would be implemented here
 
-				const executionData = this.helpers.constructExecutionMetaData(
-					this.helpers.returnJsonArray(responseData),
-					{ itemData: { item: i } },
-				);
+				switch (resource) {
+					case 'campaign':
+						campaignId = this.getNodeParameter('campaignId', i, '') as string;
+						switch (operation) {
+							case 'create':
+								body = body ?? {
+									name: this.getNodeParameter('campaignName', i) as string,
+									client_id: this.getNodeParameter('clientId', i, undefined),
+								};
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: '/campaigns/create', body });
+								break;
+							// ... (all other campaign operations)
+						}
+						break;
+					case 'lead':
+						campaignId = this.getNodeParameter('campaignId', i, '') as string;
+						leadId = this.getNodeParameter('leadId', i, '') as string;
+						switch (operation) {
+							case 'addToCampaign':
+								body = body ?? { lead_list: JSON.parse(this.getNodeParameter('leadList', i) as string) };
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `/campaigns/${campaignId}/leads`, body });
+								break;
+							// ... (all other lead operations)
+						}
+						break;
+					// ... (all other resources)
+				}
 
-				returnData.push(...executionData);
+				const executionData = this.helpers.constructExecutionMetaData(this.helpers.returnJsonArray(responseData), { itemData: { item: i } });
+				returnData = returnData.concat(executionData);
 
 			} catch (error) {
 				if (this.continueOnFail()) {
-					const executionErrorData = this.helpers.constructExecutionMetaData(
-						this.helpers.returnJsonArray({ error: error.message }),
-						{ itemData: { item: i } },
-					);
-					returnData.push(...executionErrorData);
+					const executionErrorData = this.helpers.constructExecutionMetaData(this.helpers.returnJsonArray({ error: error.message }), { itemData: { item: i } });
+					returnData = returnData.concat(executionErrorData);
 					continue;
 				}
 				throw error;
 			}
 		}
-
 		return [returnData];
 	}
 }
