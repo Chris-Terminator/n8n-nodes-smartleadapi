@@ -6,7 +6,6 @@ import {
 	NodeOperationError,
 	NodeConnectionType,
 	INodePropertyOptions,
-	ILoadOptionsFunctions,
 } from 'n8n-workflow';
 
 export class Smartlead implements INodeType {
@@ -656,8 +655,8 @@ export class Smartlead implements INodeType {
 	};
 
 	// Method to dynamically load operations based on the selected resource
-	async loadOperations(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
-		const resource = this.getCurrentNodeParameter('resource') as string;
+	async loadOperations(this: IExecuteFunctions): Promise<INodePropertyOptions[]> {
+		const resource = this.getNodeParameter('resource', 0, '') as string;
 		if (resource === 'campaign') {
 			return [
 				{ name: 'Add Email Account', value: 'addEmailAccount', description: 'Add an email account to a campaign' },
