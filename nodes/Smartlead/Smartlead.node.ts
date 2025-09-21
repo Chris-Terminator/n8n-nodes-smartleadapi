@@ -97,7 +97,7 @@ export class Smartlead implements INodeType {
 					{ name: 'Unsubscribe From All Campaigns', value: 'unsubscribeFromAll', action: 'Unsubscribe a lead from all campaigns' },
 					{ name: 'Unsubscribe From Campaign', value: 'unsubscribeFromCampaign', action: 'Unsubscribe a lead from a campaign' },
 					{ name: 'Update', value: 'update', action: 'Update a lead\'s information' },
-					{ name: 'Update Category', value: 'updateCategory', action: 'Update a lead’s category within a campaign' },
+					{ name: 'Update Category', value: 'updateCategory', action: 'Update a lead\'s category within a campaign' },
 				],
 				default: 'listAllByCampaign',
 			},
@@ -126,7 +126,7 @@ export class Smartlead implements INodeType {
 				displayOptions: { show: { resource: ['campaignStatistics'] } },
 				options: [
 					{ name: 'Export Leads', value: 'exportLeads', action: 'Export all leads from a campaign as a CSV file' },
-					{ name: 'Get Analytics', value: 'getAnalytics', action: 'Fetch top-level analytics for a campaign' },
+					{ name: 'Get Analytics', value: 'getAnalytics', action: 'Fetch top level analytics for a campaign' },
 					{ name: 'Get Analytics By Date', value: 'getAnalyticsByDate', action: 'Fetch campaign statistics within a date range' },
 					{ name: 'Get By Campaign', value: 'getByCampaign', action: 'Fetch detailed statistics for a campaign' },
 				],
@@ -140,7 +140,7 @@ export class Smartlead implements INodeType {
 				displayOptions: { show: { resource: ['masterInbox'] } },
 				options: [
 					{ name: 'Get Message History', value: 'getMessageHistory', action: 'Fetch message history for a lead in a campaign' },
-					{ name: 'Reply To Thread', value: 'replyToThread', action: 'Reply to a lead from the Master Inbox' },
+					{ name: 'Reply To Thread', value: 'replyToThread', action: 'Reply to a lead from the master inbox' },
 				],
 				default: 'getMessageHistory',
 			},
