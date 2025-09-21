@@ -178,7 +178,7 @@ export class Smartlead implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['campaign', 'campaignStatistics', 'lead', 'emailAccount', 'webhook', 'masterInbox'],
-						operation: ['get', 'delete', 'updateSchedule', 'updateSettings', 'updateStatus', 'getSequences', 'getEmailAccounts', 'addEmailAccount', 'removeEmailAccount', 'fetchCampaignStatistics', 'fetchMailboxStatistics', 'getByCampaign', 'getAnalytics', 'getAnalyticsByDate', 'exportLeads', 'listAllByCampaign', 'addToCampaign', 'deleteFromCampaign', 'removeFromCampaign', 'fetchByCampaign', 'delete', 'getMessageHistory', 'replyToThread', 'createOrUpdate'],
+						operation: ['get', 'delete', 'updateSchedule', 'updateSettings', 'updateStatus', 'getSequences', 'getEmailAccounts', 'addEmailAccount', 'removeEmailAccount', 'getByCampaign', 'getAnalytics', 'getAnalyticsByDate', 'exportLeads', 'listAllByCampaign', 'addToCampaign', 'deleteFromCampaign', 'removeFromCampaign', 'createOrUpdate', 'getMessageHistory', 'replyToThread'],
 					},
 				},
 				description: 'The ID of the campaign',
@@ -198,15 +198,29 @@ export class Smartlead implements INodeType {
 				description: 'The ID of the lead',
 			},
 			{
+				displayName: 'Account ID',
+				name: 'accountId',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: {
+					show: {
+						resource: ['emailAccount'],
+						operation: ['get', 'update', 'updateWarmup', 'getWarmupStats'],
+					},
+				},
+				description: 'The ID of the email account',
+			},
+			{
 				displayName: 'JSON Parameters',
 				name: 'jsonParameters',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to use a JSON object to specify all body parameters',
+				description: 'Whether to use a JSON object to specify all body or query parameters',
 			},
 			{
-				displayName: 'Body Parameters',
-				name: 'bodyParameters',
+				displayName: 'Parameters',
+				name: 'parameters',
 				type: 'json',
 				displayOptions: {
 					show: {
@@ -214,7 +228,7 @@ export class Smartlead implements INodeType {
 					},
 				},
 				default: '{}',
-				description: 'The JSON object to use as the request body',
+				description: 'The JSON object to use as the request body or query string',
 			},
 		],
 	};
@@ -230,7 +244,9 @@ export class Smartlead implements INodeType {
 				let campaignId, leadId, accountId, body, qs;
 
 				if (this.getNodeParameter('jsonParameters', i)) {
-					body = JSON.parse(this.getNodeParameter('bodyParameters', i) as string);
+					const parameters = JSON.parse(this.getNodeParameter('parameters', i, '{}') as string);
+					body = parameters;
+					qs = parameters;
 				}
 
 				switch (resource) {
@@ -244,7 +260,39 @@ export class Smartlead implements INodeType {
 								};
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: '/campaigns/create', body });
 								break;
-							// ... (all other campaign operations)
+							case 'getAll':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: '/campaigns' });
+								break;
+							case 'get':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `/campaigns/${campaignId}` });
+								break;
+							case 'delete':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'DELETE', url: `/campaigns/${campaignId}` });
+								break;
+							case 'updateSchedule':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `/campaigns/${campaignId}/schedule`, body });
+								break;
+							case 'updateSettings':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `/campaigns/${campaignId}/settings`, body });
+								break;
+							case 'updateStatus':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `/campaigns/${campaignId}/status`, body });
+								break;
+							case 'getSequences':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `/campaigns/${campaignId}/sequences` });
+								break;
+							case 'saveSequence':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `/campaigns/${campaignId}/sequences`, body });
+								break;
+							case 'getEmailAccounts':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `/campaigns/${campaignId}/email-accounts` });
+								break;
+							case 'addEmailAccount':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `/campaigns/${campaignId}/email-accounts`, body });
+								break;
+							case 'removeEmailAccount':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'DELETE', url: `/campaigns/${campaignId}/email-accounts`, body });
+								break;
 						}
 						break;
 					case 'lead':
@@ -255,10 +303,123 @@ export class Smartlead implements INodeType {
 								body = body ?? { lead_list: JSON.parse(this.getNodeParameter('leadList', i) as string) };
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `/campaigns/${campaignId}/leads`, body });
 								break;
-							// ... (all other lead operations)
+							case 'listAllByCampaign':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `/campaigns/${campaignId}/leads`, qs });
+								break;
+							case 'update':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `/campaigns/${campaignId}/leads/${leadId}`, body });
+								break;
+							case 'deleteFromCampaign':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'DELETE', url: `/campaigns/${campaignId}/leads/${leadId}` });
+								break;
+							case 'pauseInCampaign':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `/campaigns/${campaignId}/leads/${leadId}/pause` });
+								break;
+							case 'resumeInCampaign':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `/campaigns/${campaignId}/leads/${leadId}/resume` });
+								break;
+							case 'unsubscribeFromCampaign':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `/campaigns/${campaignId}/leads/${leadId}/unsubscribe` });
+								break;
+							case 'updateCategory':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `/campaigns/${campaignId}/leads/${leadId}/category`, body });
+								break;
+							case 'getByEmail':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: '/leads', qs });
+								break;
+							case 'getCategories':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: '/leads/fetch-categories' });
+								break;
+							case 'getCampaigns':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `/leads/${leadId}/campaigns` });
+								break;
+							case 'unsubscribeFromAll':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `/leads/${leadId}/unsubscribe` });
+								break;
+							case 'addToGlobalBlockList':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: '/leads/add-domain-block-list', body });
+								break;
 						}
 						break;
-					// ... (all other resources)
+					case 'emailAccount':
+						accountId = this.getNodeParameter('accountId', i, '') as string;
+						switch (operation) {
+							case 'getAll':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: '/email-accounts' });
+								break;
+							case 'create':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: '/email-accounts/save', body });
+								break;
+							case 'get':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `/email-accounts/${accountId}` });
+								break;
+							case 'update':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `/email-accounts/${accountId}`, body });
+								break;
+							case 'updateWarmup':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `/email-accounts/${accountId}/warmup`, body });
+								break;
+							case 'getWarmupStats':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `/email-accounts/${accountId}/warmup-stats` });
+								break;
+							case 'reconnectFailed':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: '/email-accounts/reconnect-failed-email-accounts' });
+								break;
+						}
+						break;
+					case 'campaignStatistics':
+						campaignId = this.getNodeParameter('campaignId', i, '') as string;
+						switch (operation) {
+							case 'getByCampaign':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `/campaigns/${campaignId}/statistics`, qs });
+								break;
+							case 'getAnalytics':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `/campaigns/${campaignId}/analytics` });
+								break;
+							case 'getAnalyticsByDate':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `/campaigns/${campaignId}/analytics-by-date`, qs });
+								break;
+							case 'exportLeads':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `/campaigns/${campaignId}/leads-export`, qs });
+								break;
+						}
+						break;
+					case 'masterInbox':
+						campaignId = this.getNodeParameter('campaignId', i, '') as string;
+						leadId = this.getNodeParameter('leadId', i, '') as string;
+						switch (operation) {
+							case 'getMessageHistory':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `/campaigns/${campaignId}/leads/${leadId}/message-history` });
+								break;
+							case 'replyToThread':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `/campaigns/${campaignId}/reply-email-thread`, body });
+								break;
+						}
+						break;
+					case 'webhook':
+						campaignId = this.getNodeParameter('campaignId', i, '') as string;
+						switch (operation) {
+							case 'getByCampaign':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `/campaigns/${campaignId}/webhooks` });
+								break;
+							case 'createOrUpdate':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `/campaigns/${campaignId}/webhooks`, body });
+								break;
+							case 'delete':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'DELETE', url: `/campaigns/${campaignId}/webhooks`, body });
+								break;
+						}
+						break;
+					case 'client':
+						switch (operation) {
+							case 'getAll':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: '/client' });
+								break;
+							case 'add':
+								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: '/client/save', body });
+								break;
+						}
+						break;
 				}
 
 				const executionData = this.helpers.constructExecutionMetaData(this.helpers.returnJsonArray(responseData), { itemData: { item: i } });
@@ -270,7 +431,10 @@ export class Smartlead implements INodeType {
 					returnData = returnData.concat(executionErrorData);
 					continue;
 				}
-				throw error;
+				if (error instanceof NodeOperationError) {
+					throw error;
+				}
+				throw new NodeOperationError(this.getNode(), error, { itemIndex: i });
 			}
 		}
 		return [returnData];
