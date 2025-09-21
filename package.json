@@ -1,5 +1,5 @@
 {
-	"name": "n8n-nodes-smartleadai",
+	"name": "n8n-nodes-smartleadapi",
 	"version": "1.0.1",
 	"description": "n8n node for Smartlead.ai API - manage campaigns and leads",
 	"keywords": [
@@ -11,13 +11,13 @@
 		"automation"
 	],
 	"license": "MIT",
-	"homepage": "https://github.com/Chris-Terminator/n8n-nodes-smartleadai",
+	"homepage": "https://github.com/Chris-Terminator/n8n-nodes-smartleadapi",
 	"author": {
 		"name": "Chris-Terminator"
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Chris-Terminator/n8n-nodes-smartleadai.git"
+		"url": "git+https://github.com/Chris-Terminator/n8n-nodes-smartleadapi.git"
 	},
 	"engines": {
 		"node": ">=18.17.0"
