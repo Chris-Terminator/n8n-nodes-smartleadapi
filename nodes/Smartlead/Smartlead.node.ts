@@ -180,7 +180,7 @@ export class Smartlead implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['campaign', 'campaignStatistics', 'lead', 'webhook', 'masterInbox'],
-						operation: ['get', 'delete', 'updateSchedule', 'updateSettings', 'updateStatus', 'getSequences', 'saveSequence', 'getEmailAccounts', 'addEmailAccount', 'removeEmailAccount', 'getByCampaign', 'getAnalytics', 'getAnalyticsByDate', 'exportLeads', 'listAllByCampaign', 'addToCampaign', 'update', 'deleteFromCampaign', 'pauseInCampaign', 'resumeInCampaign', 'unsubscribeFromCampaign', 'updateCategory', 'getMessageHistory', 'replyToThread', 'getByCampaign', 'createOrUpdate', 'delete',],
+						operation: ['get','delete','updateSchedule','updateSettings','updateStatus','getSequences','saveSequence','getEmailAccounts','addEmailAccount','removeEmailAccount','getByCampaign','getAnalytics','getAnalyticsByDate','exportLeads','listAllByCampaign','addToCampaign','update','deleteFromCampaign','pauseInCampaign','resumeInCampaign','unsubscribeFromCampaign','updateCategory','getMessageHistory','replyToThread','getByCampaign','createOrUpdate','delete',],
 					},
 				},
 				description: 'The ID of the campaign',
@@ -194,7 +194,7 @@ export class Smartlead implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['lead', 'masterInbox'],
-						operation: ['update', 'deleteFromCampaign', 'pauseInCampaign', 'resumeInCampaign', 'unsubscribeFromCampaign', 'updateCategory', 'getCampaigns', 'unsubscribeFromAll', 'getMessageHistory',],
+						operation: ['update','deleteFromCampaign','pauseInCampaign','resumeInCampaign','unsubscribeFromCampaign','updateCategory','getCampaigns','unsubscribeFromAll','getMessageHistory',],
 					},
 				},
 				description: 'The ID of the lead',
