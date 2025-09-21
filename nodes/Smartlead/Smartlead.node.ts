@@ -152,7 +152,7 @@ export class Smartlead implements INodeType {
 				},
 				description: 'The ID of the email account',
 			},
-			// CONSOLIDATED LIMIT
+			// Lead -> List All By Campaign (Pagination)
 			{
 				displayName: 'Limit',
 				name: 'limit',
@@ -162,52 +162,54 @@ export class Smartlead implements INodeType {
 				},
 				default: 50,
 				displayOptions: {
-					show: [
-						{
-							resource: [
-								'lead',
-							],
-							operation: [
-								'listAllByCampaign',
-							],
-						},
-						{
-							resource: [
-								'emailAccount',
-							],
-							operation: [
-								'getAll',
-							],
-						},
-					],
+					show: {
+						resource: ['lead'],
+						operation: ['listAllByCampaign']
+					}
 				},
 				description: 'Max number of results to return',
 			},
-			// CONSOLIDATED OFFSET
 			{
 				displayName: 'Offset',
 				name: 'offset',
 				type: 'number',
 				default: 0,
 				displayOptions: {
-					show: [
-						{
-							resource: [
-								'lead',
-							],
-							operation: [
-								'listAllByCampaign',
-							],
-						},
-						{
-							resource: [
-								'emailAccount',
-							],
-							operation: [
-								'getAll',
-							],
-						},
-					],
+					show: {
+						resource: ['lead'],
+						operation: ['listAllByCampaign']
+					}
+				},
+				description: 'The starting index for pagination',
+			},
+
+			// Email Account -> Get Many (Pagination)
+			{
+				displayName: 'Limit',
+				name: 'limit',
+				type: 'number',
+				typeOptions: {
+					minValue: 1,
+				},
+				default: 50,
+				displayOptions: {
+					show: {
+						resource: ['emailAccount'],
+						operation: ['getAll']
+					}
+				},
+				description: 'Max number of results to return',
+			},
+			{
+				displayName: 'Offset',
+				name: 'offset',
+				type: 'number',
+				default: 0,
+				displayOptions: {
+					show: {
+						resource: ['emailAccount'],
+						operation: ['getAll']
+					}
 				},
 				description: 'The starting index for pagination',
 			},
