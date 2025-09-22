@@ -906,19 +906,19 @@ export class Smartlead implements INodeType {
 					case 'lead':
 						switch (operation) {
 							case 'addToCampaign': {
-								// 1. Build the custom_fields object from the key-value editor
-								const customFieldsData = this.getNodeParameter('customFields', i, { fieldPair: [] }) as { fieldPair: Array<{ key: string; value: any }> };
-								const custom_fields = customFieldsData.fieldPair.reduce((obj, item) => {
+								// 1. Build the custom_fields object
+								const customFieldsData = this.getNodeParameter('customFields', i) as { fieldPair: Array<{ key: string; value: any }> };
+								const custom_fields = (customFieldsData?.fieldPair ?? []).reduce((obj, item) => { // SAFTEY CHECK ADDED
 									obj[item.key] = item.value;
 									return obj;
 								}, {} as {[key: string]: any});
 
-								// 2. Build the main lead object, starting with the required email
+								// ... The rest of the code in this block is correct and does not need to be changed ...
+								// 2. Build the main lead object
 								const leadObject: {[key: string]: any} = {
 									email: this.getNodeParameter('email', i) as string,
 								};
 
-								// 3. Dynamically add optional fields only if they have a value
 								const optionalFields: Array<[string, string]> = [
 									['first_name', this.getNodeParameter('firstName', i, '') as string],
 									['last_name', this.getNodeParameter('lastName', i, '') as string],
@@ -931,17 +931,16 @@ export class Smartlead implements INodeType {
 								];
 
 								for (const [key, value] of optionalFields) {
-									if (value) { // This check ensures we only add non-empty fields
+									if (value) {
 										leadObject[key] = value;
 									}
 								}
 
-								// Add the custom fields object if it has any keys
 								if (Object.keys(custom_fields).length > 0) {
 									leadObject.custom_fields = custom_fields;
 								}
 
-								// 4. Build the settings object
+								// 3. Build the settings object
 								const settingsData = this.getNodeParameter('settings', i, {}) as {
 									ignoreGlobalBlockList?: boolean;
 									ignoreUnsubscribeList?: boolean;
@@ -955,7 +954,7 @@ export class Smartlead implements INodeType {
 									ignore_duplicate_leads_in_other_campaign: settingsData.ignoreDuplicateLeadsInOtherCampaign ?? false,
 								};
 
-								// 5. Combine everything into the final body for the API request
+								// 4. Combine everything into the final body
 								const body = {
 									lead_list: [leadObject],
 									settings: settings,
@@ -972,10 +971,10 @@ export class Smartlead implements INodeType {
 							}
 							case 'update': {
 								const fields = this.getNodeParameter('leadUpdateFields', i) as { fieldPair: Array<{ key: string, value: any }> };
-								const body = fields.fieldPair.reduce((obj, item) => {
-        							obj[item.key] = item.value;
-        							return obj;
-    							}, {} as {[key: string]: any});
+								const body = (fields?.fieldPair ?? []).reduce((obj, item) => { // SAFTEY CHECK ADDED
+									obj[item.key] = item.value;
+									return obj;
+								}, {} as {[key: string]: any});
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/leads/${leadId}`, body });
 								break;
 							}
@@ -1038,7 +1037,7 @@ export class Smartlead implements INodeType {
 							}
 							case 'create': {
 								const fields = this.getNodeParameter('emailAccountDetails', i) as { fieldPair: Array<{ key: string, value: any }> };
-								const body = fields.fieldPair.reduce((obj, item) => {
+								const body = (fields?.fieldPair ?? []).reduce((obj, item) => { // SAFTEY CHECK ADDED
 									obj[item.key] = item.value;
 									return obj;
 								}, {} as {[key: string]: any});
@@ -1050,7 +1049,7 @@ export class Smartlead implements INodeType {
 								break;
 							case 'update': {
 								const fields = this.getNodeParameter('emailAccountDetails', i) as { fieldPair: Array<{ key: string, value: any }> };
-								const body = fields.fieldPair.reduce((obj, item) => {
+								const body = (fields?.fieldPair ?? []).reduce((obj, item) => { // SAFTEY CHECK ADDED
 									obj[item.key] = item.value;
 									return obj;
 								}, {} as {[key: string]: any});
@@ -1133,7 +1132,7 @@ export class Smartlead implements INodeType {
 								break;
 							case 'createOrUpdate': {
 								const fields = this.getNodeParameter('webhookDetails', i) as { fieldPair: Array<{ key: string, value: any }> };
-								const body = fields.fieldPair.reduce((obj, item) => {
+								const body = (fields?.fieldPair ?? []).reduce((obj, item) => { // SAFTEY CHECK ADDED
 									obj[item.key] = item.value;
 									return obj;
 								}, {} as {[key: string]: any});
@@ -1157,7 +1156,7 @@ export class Smartlead implements INodeType {
 								break;
 							case 'add': {
 								const fields = this.getNodeParameter('clientDetails', i) as { fieldPair: Array<{ key: string, value: any }> };
-								const body = fields.fieldPair.reduce((obj, item) => {
+								const body = (fields?.fieldPair ?? []).reduce((obj, item) => { // SAFTEY CHECK ADDED
 									obj[item.key] = item.value;
 									return obj;
 								}, {} as {[key: string]: any});
