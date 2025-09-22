@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-smartleadapi",
-	"version": "1.2.6",
+	"version": "1.2.7",
 	"description": "n8n node for Smartlead.ai API - manage campaigns and leads",
 	"keywords": [
 		"n8n-community-node-package",
