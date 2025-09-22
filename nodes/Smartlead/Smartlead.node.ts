@@ -310,11 +310,37 @@ export class Smartlead implements INodeType {
 			{
 				displayName: 'Sequences',
 				name: 'sequences',
-				type: 'json',
-				default: '[{ "id": 1234, "seq_number": 1 }]',
-				required: true,
-				displayOptions: { show: { resource: ['campaign'], operation: ['saveSequence'] } },
-				description: 'JSON array of sequence objects',
+				type: 'fixedCollection',
+				default: {},
+				placeholder: 'Add Sequence',
+				displayOptions: {
+					show: { resource: ['campaign'], operation: ['saveSequence'] }
+				},
+				typeOptions: {
+					multipleValues: true,
+				},
+				options: [
+					{
+						name: 'sequenceItem',
+						displayName: 'Sequence',
+						values: [
+							{
+								displayName: 'ID',
+								name: 'id',
+								type: 'number',
+								default: 0,
+								description: 'The ID of the sequence step',
+							},
+							{
+								displayName: 'Sequence Number',
+								name: 'seq_number',
+								type: 'number',
+								default: 1,
+								description: 'The order of this step in the sequence (e.g., 1, 2, 3)',
+							},
+						],
+					},
+				],
 			},
 			{
 				displayName: 'Email Account IDs',
@@ -331,13 +357,142 @@ export class Smartlead implements INodeType {
 			//                            Lead Fields
 			// ####################################################################
 			{
-				displayName: 'Lead List',
-				name: 'leadList',
-				type: 'json',
-				default: '[{"email": "john.doe@example.com", "first_name": "John"}]',
+				displayName: 'Email',
+				name: 'email',
+				type: 'string',
 				required: true,
+				default: '',
+				placeholder: 'john.doe@example.com',
 				displayOptions: { show: { resource: ['lead'], operation: ['addToCampaign'] } },
-				description: 'A JSON array of lead objects to add',
+				description: 'The lead\'s email address.',
+			},
+			{
+				displayName: 'First Name',
+				name: 'firstName',
+				type: 'string',
+				default: '',
+				displayOptions: { show: { resource: ['lead'], operation: ['addToCampaign'] } },
+			},
+			{
+				displayName: 'Last Name',
+				name: 'lastName',
+				type: 'string',
+				default: '',
+				displayOptions: { show: { resource: ['lead'], operation: ['addToCampaign'] } },
+			},
+			{
+				displayName: 'Phone Number',
+				name: 'phoneNumber',
+				type: 'string',
+				default: '',
+				displayOptions: { show: { resource: ['lead'], operation: ['addToCampaign'] } },
+			},
+			{
+				displayName: 'Company Name',
+				name: 'companyName',
+				type: 'string',
+				default: '',
+				displayOptions: { show: { resource: ['lead'], operation: ['addToCampaign'] } },
+			},
+			{
+				displayName: 'Website',
+				name: 'website',
+				type: 'string',
+				default: '',
+				placeholder: 'example.com',
+				displayOptions: { show: { resource: ['lead'], operation: ['addToCampaign'] } },
+			},
+			{
+				displayName: 'Location',
+				name: 'location',
+				type: 'string',
+				default: '',
+				displayOptions: { show: { resource: ['lead'], operation: ['addToCampaign'] } },
+			},
+			{
+				displayName: 'LinkedIn Profile URL',
+				name: 'linkedinProfile',
+				type: 'string',
+				default: '',
+				displayOptions: { show: { resource: ['lead'], operation: ['addToCampaign'] } },
+			},
+			{
+				displayName: 'Company URL',
+				name: 'companyUrl',
+				type: 'string',
+				default: '',
+				displayOptions: { show: { resource: ['lead'], operation: ['addToCampaign'] } },
+			},
+			{
+				displayName: 'Custom Fields',
+				name: 'customFields',
+				type: 'fixedCollection',
+				typeOptions: {
+					multipleValues: true,
+				},
+				default: {},
+				placeholder: 'Add Custom Field',
+				displayOptions: {
+					show: { resource: ['lead'], operation: ['addToCampaign'] },
+				},
+				options: [
+					{
+						name: 'fieldPair',
+						displayName: 'Field',
+						values: [
+							{
+								displayName: 'Key',
+								name: 'key',
+								type: 'string',
+								default: '',
+								description: 'Name of the custom field (e.g., Title)',
+							},
+							{
+								displayName: 'Value',
+								name: 'value',
+								type: 'string',
+								default: '',
+								description: 'Value for the custom field',
+							},
+						],
+					},
+				],
+			},
+			{
+				displayName: 'Advanced Settings',
+				name: 'settings',
+				type: 'collection',
+				placeholder: 'Add Setting',
+				default: {},
+				displayOptions: {
+					show: { resource: ['lead'], operation: ['addToCampaign'] },
+				},
+				options: [
+					{
+						displayName: 'Ignore Global Block List',
+						name: 'ignoreGlobalBlockList',
+						type: 'boolean',
+						default: false,
+					},
+					{
+						displayName: 'Ignore Unsubscribe List',
+						name: 'ignoreUnsubscribeList',
+						type: 'boolean',
+						default: false,
+					},
+					{
+						displayName: 'Ignore Community Bounce List',
+						name: 'ignoreCommunityBounceList',
+						type: 'boolean',
+						default: false,
+					},
+					{
+						displayName: 'Ignore Duplicate Leads in Other Campaigns',
+						name: 'ignoreDuplicateLeadsInOtherCampaign',
+						type: 'boolean',
+						default: false,
+					},
+				],
 			},
 			{
 				displayName: 'Fields to Update',
@@ -717,7 +872,10 @@ export class Smartlead implements INodeType {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/campaigns/${campaignId}/sequences` });
 								break;
 							case 'saveSequence': {
-								const body = { sequences: JSON.parse(this.getNodeParameter('sequences', i) as string) };
+								const sequenceData = this.getNodeParameter('sequences', i) as { sequenceItem: Array<{ id: number, seq_number: number }> };
+								const body = {
+									sequences: sequenceData.sequenceItem,
+								};
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/sequences`, body });
 								break;
 							}
@@ -748,7 +906,47 @@ export class Smartlead implements INodeType {
 					case 'lead':
 						switch (operation) {
 							case 'addToCampaign': {
-								const body = { lead_list: JSON.parse(this.getNodeParameter('leadList', i) as string) };
+								// 1. Build the custom_fields object from the key-value editor
+								const customFieldsData = this.getNodeParameter('customFields', i, { fieldPair: [] }) as { fieldPair: Array<{ key: string; value: any }> };
+								const custom_fields = customFieldsData.fieldPair.reduce((obj, item) => {
+									obj[item.key] = item.value;
+									return obj;
+								}, {} as {[key: string]: any});
+
+								// 2. Build the main lead object from all the standard fields
+								const leadObject = {
+									first_name: this.getNodeParameter('firstName', i, '') as string,
+									last_name: this.getNodeParameter('lastName', i, '') as string,
+									email: this.getNodeParameter('email', i) as string,
+									phone_number: this.getNodeParameter('phoneNumber', i, '') as string,
+									company_name: this.getNodeParameter('companyName', i, '') as string,
+									website: this.getNodeParameter('website', i, '') as string,
+									location: this.getNodeParameter('location', i, '') as string,
+									linkedin_profile: this.getNodeParameter('linkedinProfile', i, '') as string,
+									company_url: this.getNodeParameter('companyUrl', i, '') as string,
+									custom_fields: custom_fields,
+								};
+
+								// 3. Build the settings object from the advanced settings toggles
+								const settingsData = this.getNodeParameter('settings', i, {}) as {
+									ignoreGlobalBlockList?: boolean;
+									ignoreUnsubscribeList?: boolean;
+									ignoreCommunityBounceList?: boolean;
+									ignoreDuplicateLeadsInOtherCampaign?: boolean;
+								};
+								const settings = {
+									ignore_global_block_list: settingsData.ignoreGlobalBlockList ?? false,
+									ignore_unsubscribe_list: settingsData.ignoreUnsubscribeList ?? false,
+									ignore_community_bounce_list: settingsData.ignoreCommunityBounceList ?? false,
+									ignore_duplicate_leads_in_other_campaign: settingsData.ignoreDuplicateLeadsInOtherCampaign ?? false,
+								};
+
+								// 4. Combine everything into the final body for the API request
+								const body = {
+									lead_list: [leadObject], // The lead object is placed inside the required array
+									settings: settings,
+								};
+
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/leads`, body });
 								break;
 							}
