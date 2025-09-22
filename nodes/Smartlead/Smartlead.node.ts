@@ -319,12 +319,12 @@ export class Smartlead implements INodeType {
 			{
 				displayName: 'Email Account IDs',
 				name: 'emailAccountIds',
-				type: 'json',
+				type: 'string',
 				default: '[]',
-				placeholder: '[2907, 2908]',
+				placeholder: '2907, 2908',
 				required: true,
 				displayOptions: { show: { resource: ['campaign'], operation: ['addEmailAccount', 'removeEmailAccount'] } },
-				description: 'A JSON array of email account IDs',
+				description: 'A comma-separated list of email account IDs',
 			},
 
 			// ####################################################################
@@ -340,13 +340,37 @@ export class Smartlead implements INodeType {
 				description: 'A JSON array of lead objects to add',
 			},
 			{
-				displayName: 'Additional Fields',
+				displayName: 'Fields to Update',
 				name: 'leadUpdateFields',
-				type: 'json',
-				default: '{"company_name": "New Company Inc."}',
-				required: true,
+				type: 'fixedCollection',
+				typeOptions: {
+        			multipleValues: true,
+    			},
+				default: {},
+				placeholder: 'Add Field',
 				displayOptions: { show: { resource: ['lead'], operation: ['update'] } },
-				description: 'JSON object with fields to update on the lead',
+				options:[
+					{
+						name: 'fieldPair',
+            			displayName: 'Field',
+						values: [
+							{
+								displayName: 'Key',
+                    			name: 'key',
+                    			type: 'string',
+                    			default: '',
+                    			description: 'Name of the field to set (e.g., company_name)',
+							},
+							{
+								displayName: 'Value',
+                    			name: 'value',
+                    			type: 'string',
+                    			default: '',
+                    			description: 'Value to set for the field',
+							},
+						],
+					},
+				],
 			},
 			{
 				displayName: 'Resume Delay (Days)',
@@ -384,11 +408,12 @@ export class Smartlead implements INodeType {
 			{
 				displayName: 'Domain Block List',
 				name: 'domainBlockList',
-				type: 'json',
-				default: '["blocked.com"]',
+				type: 'string',
+				default: '',
+				placeholder: 'blocked.com, nospam.org',
 				required: true,
 				displayOptions: { show: { resource: ['lead'], operation: ['addToGlobalBlockList'] } },
-				description: 'JSON array of domains to add to the block list',
+				description: 'A comma-separated list of domains to add to the block list',
 			},
 
 			// ####################################################################
@@ -397,11 +422,37 @@ export class Smartlead implements INodeType {
 			{
 				displayName: 'Email Account Details',
 				name: 'emailAccountDetails',
-				type: 'json',
-				default: '{"from_name": "Ramesh", "from_email": "ramesh@example.com"}',
-				required: true,
-				displayOptions: { show: { resource: ['emailAccount'], operation: ['create', 'update'] } },
-				description: 'JSON object containing the email account details',
+				type: 'fixedCollection',
+				typeOptions: {
+					multipleValues: true,
+				},
+				default: {},
+				placeholder: 'Add Detail',
+				displayOptions: {
+					show: { resource: ['emailAccount'], operation: ['create', 'update'] }
+				},
+				options: [
+					{
+						name: 'fieldPair',
+						displayName: 'Detail',
+						values: [
+							{
+								displayName: 'Key',
+								name: 'key',
+								type: 'string',
+								default: '',
+								description: 'Name of the detail to set (e.g., from_name)',
+							},
+							{
+								displayName: 'Value',
+								name: 'value',
+								type: 'string',
+								default: '',
+								description: 'Value to set for the detail',
+							},
+						],
+					},
+				],
 			},
 			{
 				displayName: 'Enable Warmup',
@@ -519,11 +570,37 @@ export class Smartlead implements INodeType {
 			{
 				displayName: 'Webhook Details',
 				name: 'webhookDetails',
-				type: 'json',
-				default: '{"id": 217, "name": "Updated Webhook", "webhook_url": "https://example.com/hook"}',
-				required: true,
-				displayOptions: { show: { resource: ['webhook'], operation: ['createOrUpdate'] } },
-				description: 'JSON object containing the full webhook details',
+				type: 'fixedCollection',
+				typeOptions: {
+					multipleValues: true,
+				},
+				default: {},
+				placeholder: 'Add Detail',
+				displayOptions: {
+					show: { resource: ['webhook'], operation: ['createOrUpdate'] }
+				},
+				options: [
+					{
+						name: 'fieldPair',
+						displayName: 'Detail',
+						values: [
+							{
+								displayName: 'Key',
+								name: 'key',
+								type: 'string',
+								default: '',
+								description: 'Name of the detail to set (e.g., name, webhook_url)',
+							},
+							{
+								displayName: 'Value',
+								name: 'value',
+								type: 'string',
+								default: '',
+								description: 'Value to set for the detail',
+							},
+						],
+					},
+				],
 			},
 			{
 				displayName: 'Webhook ID',
@@ -540,11 +617,37 @@ export class Smartlead implements INodeType {
 			{
 				displayName: 'Client Details',
 				name: 'clientDetails',
-				type: 'json',
-				default: '{"name": "New Client", "email": "client@example.com"}',
-				required: true,
-				displayOptions: { show: { resource: ['client'], operation: ['add'] } },
-				description: 'JSON object containing the new client details',
+				type: 'fixedCollection',
+				typeOptions: {
+					multipleValues: true,
+				},
+				default: {},
+				placeholder: 'Add Detail',
+				displayOptions: {
+					show: { resource: ['client'], operation: ['add'] }
+				},
+				options: [
+					{
+						name: 'fieldPair',
+						displayName: 'Detail',
+						values: [
+							{
+								displayName: 'Key',
+								name: 'key',
+								type: 'string',
+								default: '',
+								description: 'Name of the detail to set (e.g., name, email)',
+							},
+							{
+								displayName: 'Value',
+								name: 'value',
+								type: 'string',
+								default: '',
+								description: 'Value to set for the detail',
+							},
+						],
+					},
+				],
 			},
 
 		],
@@ -622,12 +725,18 @@ export class Smartlead implements INodeType {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/campaigns/${campaignId}/email-accounts` });
 								break;
 							case 'addEmailAccount': {
-								const body = { email_account_ids: JSON.parse(this.getNodeParameter('emailAccountIds', i) as string) };
+								const ids = this.getNodeParameter('emailAccountIds', i) as string;
+								const body = {
+    								email_account_ids: ids.split(',').map(id => parseInt(id.trim(), 10)),
+								};
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/email-accounts`, body });
 								break;
 							}
 							case 'removeEmailAccount': {
-								const body = { email_account_ids: JSON.parse(this.getNodeParameter('emailAccountIds', i) as string) };
+								const ids = this.getNodeParameter('emailAccountIds', i) as string;
+								const body = {
+    								email_account_ids: ids.split(',').map(id => parseInt(id.trim(), 10)),
+								};
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'DELETE', url: `${baseURL}/campaigns/${campaignId}/email-accounts`, body });
 								break;
 							}
@@ -650,7 +759,11 @@ export class Smartlead implements INodeType {
 								break;
 							}
 							case 'update': {
-								const body = JSON.parse(this.getNodeParameter('leadUpdateFields', i) as string);
+								const fields = this.getNodeParameter('leadUpdateFields', i) as { fieldPair: Array<{ key: string, value: any }> };
+								const body = fields.fieldPair.reduce((obj, item) => {
+        							obj[item.key] = item.value;
+        							return obj;
+    							}, {} as {[key: string]: any});
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/leads/${leadId}`, body });
 								break;
 							}
@@ -691,7 +804,10 @@ export class Smartlead implements INodeType {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/leads/${leadId}/unsubscribe` });
 								break;
 							case 'addToGlobalBlockList': {
-								const body = { domain_block_list: JSON.parse(this.getNodeParameter('domainBlockList', i) as string) };
+								const domains = this.getNodeParameter('domainBlockList', i) as string;
+								const body = {
+    								domain_block_list: domains.split(',').map(domain => domain.trim()),
+								};
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/leads/add-domain-block-list`, body });
 								break;
 							}
@@ -709,7 +825,11 @@ export class Smartlead implements INodeType {
 								break;
 							}
 							case 'create': {
-								const body = JSON.parse(this.getNodeParameter('emailAccountDetails', i) as string);
+								const fields = this.getNodeParameter('emailAccountDetails', i) as { fieldPair: Array<{ key: string, value: any }> };
+								const body = fields.fieldPair.reduce((obj, item) => {
+									obj[item.key] = item.value;
+									return obj;
+								}, {} as {[key: string]: any});
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/email-accounts/save`, body });
 								break;
 							}
@@ -717,7 +837,11 @@ export class Smartlead implements INodeType {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/email-accounts/${accountId}` });
 								break;
 							case 'update': {
-								const body = JSON.parse(this.getNodeParameter('emailAccountDetails', i) as string);
+								const fields = this.getNodeParameter('emailAccountDetails', i) as { fieldPair: Array<{ key: string, value: any }> };
+								const body = fields.fieldPair.reduce((obj, item) => {
+									obj[item.key] = item.value;
+									return obj;
+								}, {} as {[key: string]: any});
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/email-accounts/${accountId}`, body });
 								break;
 							}
@@ -796,7 +920,11 @@ export class Smartlead implements INodeType {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/campaigns/${campaignId}/webhooks` });
 								break;
 							case 'createOrUpdate': {
-								const body = JSON.parse(this.getNodeParameter('webhookDetails', i) as string);
+								const fields = this.getNodeParameter('webhookDetails', i) as { fieldPair: Array<{ key: string, value: any }> };
+								const body = fields.fieldPair.reduce((obj, item) => {
+									obj[item.key] = item.value;
+									return obj;
+								}, {} as {[key: string]: any});
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/campaigns/${campaignId}/webhooks`, body });
 								break;
 							}
@@ -816,7 +944,11 @@ export class Smartlead implements INodeType {
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'GET', url: `${baseURL}/client` });
 								break;
 							case 'add': {
-								const body = JSON.parse(this.getNodeParameter('clientDetails', i) as string);
+								const fields = this.getNodeParameter('clientDetails', i) as { fieldPair: Array<{ key: string, value: any }> };
+								const body = fields.fieldPair.reduce((obj, item) => {
+									obj[item.key] = item.value;
+									return obj;
+								}, {} as {[key: string]: any});
 								responseData = await this.helpers.requestWithAuthentication.call(this, 'smartleadApi', { method: 'POST', url: `${baseURL}/client/save`, body });
 								break;
 							}
