@@ -913,21 +913,35 @@ export class Smartlead implements INodeType {
 									return obj;
 								}, {} as {[key: string]: any});
 
-								// 2. Build the main lead object from all the standard fields
-								const leadObject = {
-									first_name: this.getNodeParameter('firstName', i, '') as string,
-									last_name: this.getNodeParameter('lastName', i, '') as string,
+								// 2. Build the main lead object, starting with the required email
+								const leadObject: {[key: string]: any} = {
 									email: this.getNodeParameter('email', i) as string,
-									phone_number: this.getNodeParameter('phoneNumber', i, '') as string,
-									company_name: this.getNodeParameter('companyName', i, '') as string,
-									website: this.getNodeParameter('website', i, '') as string,
-									location: this.getNodeParameter('location', i, '') as string,
-									linkedin_profile: this.getNodeParameter('linkedinProfile', i, '') as string,
-									company_url: this.getNodeParameter('companyUrl', i, '') as string,
-									custom_fields: custom_fields,
 								};
 
-								// 3. Build the settings object from the advanced settings toggles
+								// 3. Dynamically add optional fields only if they have a value
+								const optionalFields: Array<[string, string]> = [
+									['first_name', this.getNodeParameter('firstName', i, '') as string],
+									['last_name', this.getNodeParameter('lastName', i, '') as string],
+									['phone_number', this.getNodeParameter('phoneNumber', i, '') as string],
+									['company_name', this.getNodeParameter('companyName', i, '') as string],
+									['website', this.getNodeParameter('website', i, '') as string],
+									['location', this.getNodeParameter('location', i, '') as string],
+									['linkedin_profile', this.getNodeParameter('linkedinProfile', i, '') as string],
+									['company_url', this.getNodeParameter('companyUrl', i, '') as string],
+								];
+
+								for (const [key, value] of optionalFields) {
+									if (value) { // This check ensures we only add non-empty fields
+										leadObject[key] = value;
+									}
+								}
+
+								// Add the custom fields object if it has any keys
+								if (Object.keys(custom_fields).length > 0) {
+									leadObject.custom_fields = custom_fields;
+								}
+
+								// 4. Build the settings object
 								const settingsData = this.getNodeParameter('settings', i, {}) as {
 									ignoreGlobalBlockList?: boolean;
 									ignoreUnsubscribeList?: boolean;
@@ -941,9 +955,9 @@ export class Smartlead implements INodeType {
 									ignore_duplicate_leads_in_other_campaign: settingsData.ignoreDuplicateLeadsInOtherCampaign ?? false,
 								};
 
-								// 4. Combine everything into the final body for the API request
+								// 5. Combine everything into the final body for the API request
 								const body = {
-									lead_list: [leadObject], // The lead object is placed inside the required array
+									lead_list: [leadObject],
 									settings: settings,
 								};
 
