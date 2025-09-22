@@ -364,7 +364,7 @@ export class Smartlead implements INodeType {
 				default: '',
 				placeholder: 'john.doe@example.com',
 				displayOptions: { show: { resource: ['lead'], operation: ['addToCampaign'] } },
-				description: 'Email address of lead.',
+				description: 'Email address of lead',
 			},
 			{
 				displayName: 'First Name',
